@@ -1,13 +1,18 @@
 import urllib.request
 import time
 
-URL = "http://192.168.4.1:81/stream"
+from camera_config import get_stream_url
+
+URL = get_stream_url()
 
 print("Conectando...")
 
 inicio = time.perf_counter()
 
-stream = urllib.request.urlopen(URL, timeout=10)
+try:
+    stream = urllib.request.urlopen(URL, timeout=10)
+except OSError as exc:
+    raise SystemExit(f"No se pudo conectar: {exc}. Revisa IP y hotspot.")
 
 print("Conectado.")
 
@@ -18,7 +23,7 @@ try:
 
     while True:
 
-        data = stream.read(4096)
+        data = stream.read1(4096)
 
         if not data:
             print("\nEl stream terminó.")
@@ -43,6 +48,11 @@ try:
 except KeyboardInterrupt:
 
     print("\nPrueba detenida.")
+
+except OSError as exc:
+    print(f"Error de recepción: {exc}")
+finally:
+    stream.close()
 
 tiempo = time.perf_counter() - inicio
 

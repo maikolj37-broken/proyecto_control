@@ -3,17 +3,22 @@ import urllib.request
 import numpy as np
 import time
 
-URL = "http://192.168.4.1:81/stream"
+from camera_config import get_stream_url
+
+URL = get_stream_url()
 
 print("Conectando al ESP32-CAM...")
 inicio_conexion = time.perf_counter()
 
-stream = urllib.request.urlopen(URL, timeout=10)
+try:
+    stream = urllib.request.urlopen(URL, timeout=10)
+except OSError as exc:
+    raise SystemExit(f"No se pudo conectar: {exc}. Revisa IP y hotspot.")
 
 tiempo_conexion = time.perf_counter() - inicio_conexion
 
 print(f"Conexión establecida en: {tiempo_conexion:.3f} s")
-print("Iniciando prueba...")
+print("Iniciando prueba de recepción; NO mide latencia física extremo a extremo.")
 print("Presiona Q para terminar.\n")
 
 buffer = b""
@@ -22,7 +27,7 @@ frames = 0
 frames_validos = 0
 
 inicio = time.perf_counter()
-ultimo_frame = inicio
+ultimo_frame = None
 
 fps_actual = 0
 latencia_frame = 0
@@ -33,7 +38,7 @@ intervalos = []
 while True:
 
     try:
-        data = stream.read(4096)
+        data = stream.read1(4096)
 
         if not data:
             print("ERROR: el stream dejó de enviar datos.")
@@ -54,6 +59,8 @@ while True:
             fin_jpg = buffer.find(b"\xff\xd9", inicio_jpg + 2)
 
             if fin_jpg == -1:
+                if len(buffer) > 4 * 1024 * 1024:
+                    raise ValueError("JPEG incompleto o stream corrupto (más de 4 MiB)")
                 break
 
             jpg = buffer[inicio_jpg:fin_jpg + 2]
@@ -74,7 +81,7 @@ while True:
             frames_validos += 1
 
             # Tiempo entre frames
-            intervalo = ahora - ultimo_frame
+            intervalo = ahora - ultimo_frame if ultimo_frame is not None else 0
             ultimo_frame = ahora
 
             if intervalo > 0:
@@ -89,7 +96,7 @@ while True:
             texto1 = f"FPS: {fps_actual:.1f}"
             texto2 = f"Frame: {frames_validos}"
             texto3 = f"Buffer: {len(buffer)/1024:.1f} KB"
-            texto4 = f"JPEG: {len(jpg)/1024:.1f} KB"
+            texto4 = f"JPEG: {len(jpg)/1024:.1f} KB | {ancho}x{alto}"
 
             cv2.putText(
                 frame,
@@ -138,8 +145,7 @@ while True:
             if tecla == ord('q'):
                 raise KeyboardInterrupt
 
-            # Solo procesamos un frame antes de volver a leer
-            break
+            # Procesar todos los JPEG completos antes de volver a leer la red.
 
     except KeyboardInterrupt:
         break
@@ -155,6 +161,7 @@ while True:
 
 tiempo_total = time.perf_counter() - inicio
 
+stream.close()
 cv2.destroyAllWindows()
 
 print("\n==============================")

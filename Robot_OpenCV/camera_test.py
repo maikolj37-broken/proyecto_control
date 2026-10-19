@@ -6,7 +6,9 @@ import time
 # CONFIGURACIÓN
 # ============================================================
 
-URL = "http://192.168.4.1:81/stream"
+from camera_config import get_stream_url, open_capture, detector_frame
+
+URL = get_stream_url()
 
 
 # ============================================================
@@ -15,7 +17,7 @@ URL = "http://192.168.4.1:81/stream"
 
 print("Conectando a la ESP32-CAM...")
 
-cap = cv2.VideoCapture(URL)
+cap = open_capture(URL)
 
 if not cap.isOpened():
     print("ERROR: No se pudo abrir el stream.")

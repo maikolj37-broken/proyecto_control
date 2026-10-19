@@ -7,7 +7,9 @@ import numpy as np
 # CONFIGURACIÓN
 # ============================================================
 
-URL = "http://192.168.4.1:81/stream"
+from camera_config import get_stream_url, open_capture, detector_frame
+
+URL = get_stream_url()
 
 FRAME_WIDTH = 160
 FRAME_HEIGHT = 120
@@ -48,7 +50,7 @@ MAX_CENTER_JUMP = 35
 
 print("Conectando a la ESP32-CAM...")
 
-cap = cv2.VideoCapture(URL)
+cap = open_capture(URL)
 
 if not cap.isOpened():
     print("ERROR: No se pudo abrir el stream.")
@@ -326,6 +328,9 @@ while True:
     # ========================================================
     # ESCALA DE GRISES
     # ========================================================
+
+    # VGA/QVGA -> tamaño de análisis original; el firmware ya rota 180 grados.
+    frame = detector_frame(frame)
 
     gray = cv2.cvtColor(
         frame,

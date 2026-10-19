@@ -1,6 +1,6 @@
 # Verificaciones de la entrega — 19 de octubre de 2026
 
-## Firmware nuevo
+## Firmware inicial (histórico, anterior al cambio a STA)
 
 Compilación con Arduino CLI, Arduino-ESP32 **3.3.12**, FQBN **esp32:esp32:esp32cam**, salida **0**.
 
@@ -19,6 +19,20 @@ No se ha cargado el firmware ni comprobado alimentación, sensor, orientación, 
 - Entorno usado: Python 3.14.7, OpenCV 5.0.0 y NumPy 2.5.1.
 - Estos ensayos no ejecutan los cuatro programas contra la cámara real ni validan los controladores históricos en motores.
 
-## Copias
+## Copias iniciales (histórico)
 
 1105 archivos de origen copiados (aproximadamente 283.4 MiB), comparados byte a byte mediante SHA-256 durante la copia. Se omiten 28 entradas de caché, temporales, ZIP o archivos vacíos, detalladas en `exclusiones.csv`. El inventario describe el material de origen; las nuevas guías y archivos de configuración del repositorio se añadieron después.
+
+
+## Actualización STA y clientes OpenCV
+
+El firmware actualizado del usuario utiliza hotspot, IP por DHCP, MJPEG en el puerto 81, VGA/QVGA y rotación de 180 grados. Se conserva su funcionamiento; los datos WiFi se extraen a `secrets.h` local, ignorado por Git, con plantilla `secrets.example.h` para otras máquinas.
+
+- `python -m unittest discover -s tests -v`: 3 pruebas aprobadas (salida 0). Incluyen URL/configuración, escala/orientación y ejecución de los cuatro clientes contra un servidor HTTP MJPEG local en VGA y QVGA (8 ejecuciones).
+- Las ventanas se simulan en las pruebas, pero la recepción HTTP y la decodificación JPEG/OpenCV son reales. El servidor termina intencionalmente: los avisos FFmpeg de fin prematuro corresponden a ese cierre de prueba.
+- Sintaxis de los 5 módulos Python revisada y `--help` de los cuatro programas con salida 0.
+- `camera_test.py` conserva resolución de entrada; `deteccion_camino.py` reduce a 160 × 120 antes de analizar, sin duplicar la rotación del firmware.
+- La prueba de FPS procesa todos los JPEG completos disponibles; no mide latencia física de captura.
+- No se ha comprobado esta versión contra la placa física, ni medido FPS reales, conexión del hotspot o detección sobre la pista del robot.
+
+Compilación del firmware STA actual: Arduino-ESP32 3.3.12, `esp32:esp32:esp32cam`, salida 0. Programa: 1027389 bytes (32%); variables globales: 59352 bytes (18%).

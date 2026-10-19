@@ -14,7 +14,9 @@ Avance del proyecto al 19 de octubre de 2026. Se reúnen los programas existente
 
 ## Prueba de la cámara
 
-La nueva carpeta `arduino/camara_opencv/` contiene el firmware para **ESP32-CAM AI Thinker con OV3660**, red `RobotCam`, clave de demostración `robotcam123`, video MJPEG en `http://192.168.4.1:81/stream`, resolución 160 × 120. Los cuatro programas originales de `Robot_OpenCV` ya usan esa URL.
+La carpeta `arduino/camara_opencv/` contiene el firmware actualizado para **ESP32-CAM AI Thinker con OV3660**. Se conecta al hotspot en modo STA: **no crea una red RobotCam**. El monitor serie muestra la IP asignada. Transmite MJPEG en `http://IP:81/stream`, a VGA (640 × 480) con PSRAM o QVGA (320 × 240) sin ella. El firmware ya gira la imagen 180 grados.
+
+Antes de compilar una descarga de GitHub, copiar `secrets.example.h` como `secrets.h` y completar los datos del hotspot. El archivo real queda excluido de Git. Los cuatro clientes aceptan `--ip`, `--url` o la variable `ROBOT_CAMERA_IP`; sin esos argumentos preguntan la IP al iniciar. El detector reduce a 160 × 120 para conservar su ROI y umbrales; los visores conservan la resolución recibida.
 
 Consulta [la guía de carga y prueba](docs/PRUEBA_CAMARA.md).
 
@@ -33,7 +35,7 @@ python deteccion_camino.py
 - Los resultados de los talleres corresponden a videos de referencia, no a capturas de la OV3660 del robot. El PWM del taller es una propuesta offline y no una validación física.
 - `test_fps_latency.py` mide recepción e intervalos entre imágenes. No mide latencia física extremo a extremo entre exposición y pantalla.
 - La compilación y verificaciones de esta entrega se registran en [VALIDACION.md](docs/VALIDACION.md). La carga, orientación, alimentación y video real requieren ensayo con la placa.
-- Los programas históricos se conservan sin cambiar sus parámetros. No se afirma que todos compilen con la misma versión de Arduino-ESP32.
+- Los programas históricos de motores y talleres se conservan sin cambiar sus parámetros. No se afirma que todos compilen con la misma versión de Arduino-ESP32.
 
 ## Talleres
 
@@ -41,8 +43,8 @@ Desde `Taller_Procesamiento_Imagenes`, instalar `requisitos_taller_opencv3.txt` 
 
 ## Procedencia
 
-Copias de las carpetas locales de Arduino `proyecto_control`, `Robot_OpenCV` y `Taller_Procesamiento_Imagenes`. `docs/inventario.csv` registra la ruta de destino, tamaño y SHA-256 de cada archivo copiado. `docs/exclusiones.csv` identifica archivos comprimidos, cachés, temporales y vacíos omitidos. Los originales permanecen en su ubicación; la única adición al árbol original de Arduino es `camara_opencv` y se añaden instrucciones/dependencias al árbol de OpenCV.
+Copias de las carpetas locales de Arduino `proyecto_control`, `Robot_OpenCV` y `Taller_Procesamiento_Imagenes`. `docs/inventario.csv` conserva el inventario de la copia inicial (rutas, tamaños y SHA-256); las modificaciones posteriores se consultan en el historial Git. `docs/exclusiones.csv` identifica archivos comprimidos, cachés, temporales y vacíos omitidos. Los originales permanecen en su ubicación; la única adición al árbol original de Arduino es `camara_opencv` y se añaden instrucciones/dependencias al árbol de OpenCV.
 
-Las claves WiFi incluidas son las claves locales de demostración de los sketches. No son credenciales de una red doméstica. Los videos de referencia se conservan como material de estudio; no se atribuye su captura al equipo ni se concede una licencia sobre contenido de terceros.
+Las claves publicadas de los sketches históricos de motores son de demostración. Los datos reales del hotspot de la cámara se guardan únicamente en `secrets.h`, excluido de Git. Los videos de referencia se conservan como material de estudio; no se atribuye su captura al equipo ni se concede una licencia sobre contenido de terceros.
 
 Referencia técnica del firmware: [controlador esp32-camera de Espressif](https://github.com/espressif/esp32-camera) y ejemplo CameraWebServer de Arduino-ESP32 3.3.12 instalado localmente.

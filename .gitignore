@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+secrets.h
+build/
+*.bin
+*.elf
+*.map
+*.zip
+Thumbs.db
+.DS_Store

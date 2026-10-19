@@ -13,3 +13,4 @@ build/
 *.zip
 Thumbs.db
 .DS_Store
+Robot_OpenCV/resultados_seguimiento/

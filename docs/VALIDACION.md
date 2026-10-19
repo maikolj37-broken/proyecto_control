@@ -36,3 +36,12 @@ El firmware actualizado del usuario utiliza hotspot, IP por DHCP, MJPEG en el pu
 - No se ha comprobado esta versión contra la placa física, ni medido FPS reales, conexión del hotspot o detección sobre la pista del robot.
 
 Compilación del firmware STA actual: Arduino-ESP32 3.3.12, `esp32:esp32:esp32cam`, salida 0. Programa: 1027389 bytes (32%); variables globales: 59352 bytes (18%).
+
+## Taller en vivo y anticipación espacial FFT
+
+- Se agregan `seguimiento_linea.py`, `linea_pipeline.py`, `linea_fft.py` y `linea_taller.py` en Robot_OpenCV. No cambian los firmwares ni los clientes anteriores.
+- 11 pruebas automáticas aprobadas con `python -m unittest discover -s tests -v` (salida 0). Se comprueban reutilización exacta de las funciones del taller, recta, desplazamientos laterales, curvas izquierda/derecha, pérdida/recuperación, ausencia de cobertura lejana, línea blanca/manual, filtrado FFT y ejecución del programa nuevo contra un servidor HTTP MJPEG local (8 cuadros procesados).
+- Ensayo de integración por CLI con video **sintético** de 90 cuadros: curva derecha, 15 cuadros sin línea, curva izquierda. CSV de 91 filas incluyendo finalización: guía válida en curvas, velocidad relativa cero durante pérdida y al finalizar. No es un ensayo del robot.
+- Panel de 16 etapas renderizado e inspeccionado visualmente; ejemplo sintético disponible en `docs/imagenes/seguimiento_ejemplo_sintetico.png`.
+- Consulta a `/status` en la última IP indicada por el usuario sin respuesta dentro de 3 segundos. No se pudo verificar esta nueva versión contra la cámara durante esta entrega.
+- La FFT filtra el perfil espacial observado; no pronostica tramos fuera de imagen ni estima velocidad física. Las referencias son adimensionales y requieren calibración/integración con el controlador de motores antes de accionar el robot.

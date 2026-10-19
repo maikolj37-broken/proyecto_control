@@ -39,6 +39,13 @@ python deteccion_camino.py
 
 ## Talleres
 
+### Taller aplicado al stream y anticipación FFT
+
+Desde `Robot_OpenCV`, ejecutar `python seguimiento_linea.py --ip IP_DE_LA_CAMARA`.
+El nuevo programa muestra 16 etapas, reutiliza el ajuste L2 del taller y filtra por FFT el perfil de centros para anticipar la dirección de la pista **visible**. Produce error lateral y referencias adimensionales para un futuro controlador; todavía no envía órdenes a motores. Consulta [el procedimiento paso a paso](Robot_OpenCV/SEGUIMIENTO_PASO_A_PASO.md).
+
+Teclas: M mosaico, N/P etapas, Espacio pausa, S guardar imágenes, Q salir. `--guardar` registra mediciones. Los resultados de estas nuevas sesiones se guardan localmente y se excluyen de Git.
+
 Desde `Taller_Procesamiento_Imagenes`, instalar `requisitos_taller_opencv3.txt` y seguir `PASO_A_PASO_TALLER_OPENCV3.md`. Se preservan también versiones anteriores y sus resultados. Los archivos grandes generados hacen que la primera descarga sea considerable.
 
 ## Procedencia
